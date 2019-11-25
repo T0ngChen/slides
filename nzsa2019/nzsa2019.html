@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>nzsa2019.utf8</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Tong Chen  Supervisors: Prof Thomas Lumley and Dr Claudia Rivera" />
+    <link href="nzsa2019_files/remark-css/default.css" rel="stylesheet" />
+    <link href="nzsa2019_files/remark-css/default-fonts.css" rel="stylesheet" />
+    <script src="nzsa2019_files/kePrint/kePrint.js"></script>
+    <link rel="stylesheet" href="my.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Optimal Multi-wave Sampling for Regression Modelling
+<html>
+<div style="float:left">
+
+</div>
+<hr color='#EB811B' size=1px width=800px>
+</html>
+### Tong Chen <br>Supervisors: Prof Thomas Lumley and Dr Claudia Rivera
+### University of Auckland
+### 26/11/2019
+
+---
+
+
+
+
+&lt;style&gt;
+
+.remark-slide-number {
+  position: inherit;
+}
+
+.remark-slide-number .progress-bar-container {
+  position: absolute;
+  bottom: 0;
+  height: 6px;
+  display: block;
+  left: 0;
+  right: 0;
+}
+
+.remark-slide-number .progress-bar {
+  height: 100%;
+  background-color: #EB811B;
+}
+
+.orange {
+  color: #EB811B;
+}
+
+&lt;/style&gt;
+
+
+
+# Motivation
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+* Measurement error problem 
+
+    + Self-reporting error (smoking)
+    
+        - can be validated by biochemical review.
+        
+        - for cotinine – saliva or urine.
+        
+        - for carbon monoxide – blood.
+---
+
+# Two-phase design
+
+
+&lt;br&gt;
+- Phase I:  sample a large number of people from population.
+
+  - Y: outcome of interest.
+  
+  - Z: expensive exposure variables or some cheap variables.
+  
+  - A: auxiliary variables (not in the model of interest).
+
+&lt;br&gt;
+- Phase II: sample a small number of individuals from the phase-I sample, and measure extra variables.
+
+  - X: variables of interest which are expensive to measure.
+
+---
+
+# Data Structure
+&lt;br&gt;
+&lt;img src="1.png" width="745" style="display: block; margin: auto;" /&gt;
+
+`\(R_i = 1\)` if subject `\(i\)` is in the phase-II sample, otherwise, `\(R_i = 0\)`.
+
+---
+
+# Observed data likelihood
+&lt;br&gt;
+&lt;br&gt;
+`$$L = \prod_{R_i=1} f(\mathbf{y}_{i}|\mathbf{x}_{i},\mathbf{z}_{i};\beta) g(\mathbf{x}_{i}|\mathbf{z}_{i}, A; \alpha) \prod_{R_i=0} P(\mathbf{y}_{i}|\mathbf{z}_{i}, A;\beta,\alpha) ,$$`
+
+Where
+
+- `\(f(\mathbf{y}_{i}|\mathbf{x}_{i},\mathbf{z}_{i};\beta)\)` is the outcome model.
+
+- `\(g(\mathbf{x}_{i}|\mathbf{z}_{i}, A; \alpha)\)` is the imputation model.
+
+- `\(P(Y|Z,A;\beta,\alpha) = \int f(Y|X,Z;\beta)g(X|Z,A; \alpha) dX\)`.
+
+---
+
+
+# Estimation methods
+
+&lt;br&gt;
+
+- Model based methods
+
+ - Semi-parametric maximum likelihood estimator (MLE) (Scott and Wild, 1997; Breslow and Holubkov, 1997; Tao, et al., 2017).
+  
+&lt;br&gt;
+
+
+- Design-based methods (model-assisted survey sampling).
+  
+  - Weighted likelihood.
+   
+  - Generalized raking.
+---
+
+# Generalized raking
+
+&lt;br&gt;
+&lt;br&gt;
+- Generalized raking:  adjusted π based on auxiliary variable `\(A\)` (Deville and Särndal, 1992).
+
+`$$\hat{T}_{\mathrm{Y}}=\sum_{i: R_{i}=1} \frac{g_{i}}{\pi_{i}} y_{i}$$`
+
+
+
+- Influence function serves as auxiliary information (Breslow, et al., 2009; Rivera and Lumley, 2016).
+
+
+---
+
+
+# Optimal design
+
+&lt;img src="plot1.png" width="1376" /&gt;
+
+&lt;img src="red.png" width="20px" height="40px" /&gt;
+ : individuals sampled at phase II
+ 
+&lt;img src="grey.png" width="20px" height="40px" /&gt;
+ : individuals not in phase-II sample
+ 
+---
+
+# Optimal design - MLE
+
+&lt;img src="MLE.png" width="650px" height="500px" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# Optimal design - Design-based estimators
+
+&lt;img src="design.png" width="650px" height="500px" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Optimal design - Design-based estimators
+
+&lt;br&gt;
+Neyman allocation (Neyman, 1934):
+
+- minimize the variance of an estimator of population total.
+
+- `\(\sqrt{n}(\hat{\beta} -\beta) = \sum_{i=1}^{h}\mathbf{h}_i(\beta) + O_p(n^{-1/2})\)`.
+
+- The estimated optimal allocation for stratum `\(i\)` is going to be 
+
+`$$\hat{n}_i = \frac{n N_i \text{Var}(\mathbf{h}_i(\beta))^{1/2}}{\sum_{i = 1}^h{N_i \text{Var}(\mathbf{h}_i(\beta))^{1/2}}}$$`
+`\(\space\)` `\(\space\)` where `\(\mathbf{h}_i(\beta)\)` is the influence function for `\(\hat{\beta}\)`.
+
+---
+# Multi-wave sampling
+
+&lt;br&gt;
+- Optimal design depends on the unknown parameters.
+
+- Reilly and Pepe (1995) suggested the parameters can be estimated from a validation study.
+
+- Multi-wave sampling (McIsaac and Cook, 2015):
+
+  - sample wave I with pre-specified probability and wave I size.
+  
+  - combine phase-I and wave-I data to sample wave II.
+
+  - sample more waves if needed.
+
+---
+# Wave I matters
+
+&lt;br&gt;
+&lt;br&gt; 
+&lt;br&gt;
+- A bad sampling probabilities may oversample individuals from some less interesting strata than we need.
+
+&lt;br&gt;
+- A small sample size may lead to the influence function to be poorly estimated. Because we want to have `\(h(\beta)\)` but end up with having `\(h(\hat{\beta)}\)`. 
+---
+
+# Prior can help
+
+&lt;br&gt;
+Our sampling method:
+
+- Step 1: Combine prior, phase-I data, outcome model and imputation model to compute the posterior distribution for `\(\alpha\)`, `\(\beta\)`, `\(X\)`.
+
+- Step 2: Impute `\(X\)` for all the cohort subjects and then compute influence function.
+
+- Step 3: Estimate the optimal sampling probability and sample wave I.
+
+- Step 4: Combine posterior distribution, wave-I, phase-I data to sample wave II.
+
+Analysis was done by generalized raking without using priors.
+
+---
+
+# Simulation study
+
+- Generate 500 phase-I sample with `\(N=1000\)`, `\(n=300\)`.
+  
+  - `\(X \thicksim Bern(0.2) \hspace{0.5cm} Z_1 \thicksim Norm(0,1)\hspace{0.5cm} Z_2 \thicksim Bern(0.5)\)`.
+
+-  A is a surrogate for X with prespecified sensitivity and specificity.
+
+-  Outcome model: `\(logit(p_y) = -0.3 +  \beta_x X + Z_1 + Z_2\)`.
+
+- Wave I setting: 
+  - Well calibrated priors: `\(\alpha; \beta \sim\)` N(true, 0.1); `\(\alpha; \beta \sim\)` N(true, 1).
+  
+  - Poorly calibrated priors: `\(\alpha; \beta \sim\)` N(-1, 0.1); `\(\alpha; \beta \sim\)` N(-1, 1).
+  
+  - Proportional stratified sampling.
+                 
+---
+
+# Simulation study
+
+&lt;style type="text/css"&gt;
+    .remark-slide thead, .remark-slide tr:nth-child(2n) {
+        background-color: white;
+    }
+&lt;/style&gt;
+
+&lt;table class="table table-striped" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="border-bottom:hidden" colspan="1"&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;N(T, 0.1)&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;N(T, 1)&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;N(-1, 0.1)&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;N(-1, 1)&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;Proportional&lt;/div&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Est &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; se &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Est &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; se &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Est &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; se &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Est &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; se &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Est &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; se &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 1/6 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.025 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.011 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.038 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.309 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.023 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.293 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.025 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.300 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 2/6 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.012 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.280 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.012 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.281 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.008 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.304 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.004 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.289 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.029 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.287 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 3/6 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; -0.005 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.281 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.010 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.043 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.306 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.010 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.292 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; -0.003 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.290 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 4/6 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.047 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.281 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.030 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.024 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.310 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.036 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.299 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.021 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.299 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 5/6 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.005 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.283 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.010 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.284 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.041 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.316 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.023 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.308 &lt;/td&gt;
+   &lt;td style="text-align:right;font-weight: bold;"&gt; 0.039 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.306 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;&lt;td style="padding: 0; border: 0;" colspan="100%"&gt;&lt;span style="font-style: italic;"&gt;Note: &lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="padding: 0; border: 0;" colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; Est: estimated coefficient, &lt;br&gt; se: estimated standard error.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+
+`\(\beta_x = 0.75\)` with sensitivity and specificity 0.8.
+---
+
+# Varying the value of `\(\beta_x\)`
+
+&lt;br&gt;
+&lt;table class="table table-striped" style="margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+&lt;tr&gt;
+&lt;th style="border-bottom:hidden" colspan="1"&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;beta = 0.25&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;beta = 0.75&lt;/div&gt;&lt;/th&gt;
+&lt;th style="border-bottom:hidden; padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2"&gt;&lt;div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; "&gt;beta = 1.5&lt;/div&gt;&lt;/th&gt;
+&lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N(T, 1) &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Prop &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N(T, 1) &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Prop &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; N(T, 1) &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Prop &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 1/6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.273 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.288 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.300 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.308 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.354 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 2/6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.273 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.274 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.281 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.287 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.308 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.323 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 3/6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.271 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.280 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.290 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.309 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.324 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 4/6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.273 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.284 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.282 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.299 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.312 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.332 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; 5/6 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.275 &lt;/td&gt;
+   &lt;td style="text-align:right;color: red !important;"&gt; 0.293 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.284 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.306 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.312 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.347 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tfoot&gt;
+&lt;tr&gt;&lt;td style="padding: 0; border: 0;" colspan="100%"&gt;&lt;span style="font-style: italic;"&gt;Note: &lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td style="padding: 0; border: 0;" colspan="100%"&gt;
+&lt;sup&gt;&lt;/sup&gt; The values in the table are the estimated standard error.&lt;br&gt;           The sensitivity and specificity are fixed at 0.8.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;
+
+---
+class: bottom inverse
+
+# Remarks
+
+
+### Optimal design depends on estimation methods, any prespecified sampling probabilities can be bad.
+&lt;br&gt;
+
+--
+### Prior helps for small wave I, and the design with well calibrated priors is close to optimal.
+&lt;br&gt;
+
+--
+### Poorly calibrated strong prior is worse than a relatively flat prior. Maybe do not use strong priors.
+&lt;br&gt;
+&lt;br&gt;
+
+---
+# References
+.font60[
+Breslow, N. E. and R. Holubkov (1997). "Maximum likelihood
+estimation of logistic regression parameters under two-phase,
+outcome-dependent sampling". In: _Journal of the Royal Statistical
+Society: Series B (Statistical Methodology)_ 59.2, pp. 447-461.
+
+Breslow, N. E, T. Lumley, C. M. Ballantyne, et al. (2009). "Using
+the whole cohort in the analysis of case-cohort data". In:
+_American Journal of Epidemiology_ 169.11, pp. 1398-1405.
+
+Deville, J. and C. Särndal (1992). "Calibration estimators in
+survey sampling". In: _Journal of the American Statistical
+Association_ 87.418, pp. 376-382.
+
+McIsaac, M. A. and R. J. Cook (2015). "Adaptive sampling in
+two-phase designs: a biomarker study for progression in
+arthritis". In: _Statistics in Medicine_ 34.21, pp. 2899-2912.
+
+Neyman, J. (1934). "On the two different aspects of the
+representative method: the method of stratified sampling and the
+method of purposive selection". In: _Journal of the Royal
+Statistical Society_ 97.4, pp. 558-625.
+
+Reilly, M. and M. S. Pepe (1995). "A mean score method for missing
+and auxiliary covariate data in regression models". In:
+_Biometrika_ 82.2, pp. 299-314.
+
+Rivera, C. and T. Lumley (2016). "Using the whole cohort in the
+analysis of countermatched samples". In: _Biometrics_ 72.2, pp.
+382-391.
+
+Scott, A. J. and C. J. Wild (1997). "Fitting regression models to
+case-control data by maximum likelihood". In: _Biometrika_ 84.1,
+pp. 57-71.
+
+Tao, R, D. Zeng, and D. Lin (2017). "Efficient Semiparametric
+Inference Under Two-Phase Sampling, With Applications to Genetic
+Association Studies". In: _Journal of the American Statistical
+Association_ 112.520, pp. 1468-1476.
+]
+
+---
+
+class: center, middle, inverse
+#Thanks!
+
+
+Slides created via R package [**xaringan**](https://github.com/yihui/xaringan).
+
+Slides can be found at https://github.com/T0ngChen/slides
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "<div class=\"progress-bar-container\">   <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">   </div> </div>"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -309,7 +309,7 @@ tab %>%
   add_header_above(c(" " = 1, "beta = 0.25" = 2, "beta = 0.75" = 2, "beta = 1.5" = 2)) %>%
   footnote(general = "The values in the table are the estimated standard error.
            The sensitivity and specificity are fixed at 0.8.") %>%
-  column_spec(3, color = "red") 
+  column_spec(2, color = "red") 
 
 ```
 
